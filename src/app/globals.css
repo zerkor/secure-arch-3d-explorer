@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy:    #0a0f1e;
+  --cyan:    #00ffe0;
+  --surface: #1a2540;
+  --alert:   #ff4d6d;
+  --gold:    #ffd700;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: var(--navy);
+  color: #f5f5f5;
+  scroll-behavior: smooth;
+}
+
+/* ── Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar              { width: 6px; }
+::-webkit-scrollbar-track        { background: #0a0f1e; }
+::-webkit-scrollbar-thumb        { background: #1a2540; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover  { background: #00ffe0; }
+
+/* ── Glitch text animation ──────────────────────────── */
+@keyframes glitch-clip-1 {
+  0%   { clip-path: inset(40% 0 61% 0); transform: translate(-2px, 0); }
+  20%  { clip-path: inset(92% 0 1% 0);  transform: translate(2px, 0); }
+  40%  { clip-path: inset(43% 0 50% 0); transform: translate(-1px, 0); }
+  60%  { clip-path: inset(25% 0 58% 0); transform: translate(2px, 0); }
+  80%  { clip-path: inset(54% 0 7% 0);  transform: translate(-2px, 0); }
+  100% { clip-path: inset(58% 0 43% 0); transform: translate(0, 0); }
+}
+@keyframes glitch-clip-2 {
+  0%   { clip-path: inset(24% 0 29% 0); transform: translate(2px, 0); }
+  20%  { clip-path: inset(54% 0 21% 0); transform: translate(-2px, 0); }
+  40%  { clip-path: inset(74% 0 2% 0);  transform: translate(2px, 0); }
+  60%  { clip-path: inset(35% 0 45% 0); transform: translate(-1px, 0); }
+  80%  { clip-path: inset(73% 0 4% 0);  transform: translate(1px, 0); }
+  100% { clip-path: inset(20% 0 60% 0); transform: translate(2px, 0); }
+}
+
+.glitch {
+  position: relative;
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.glitch::before {
+  color: #ff4d6d;
+  animation: glitch-clip-1 0.6s infinite linear alternate-reverse;
+  opacity: 0.7;
+}
+.glitch::after {
+  color: #00ffe0;
+  animation: glitch-clip-2 0.6s infinite linear alternate-reverse;
+  opacity: 0.7;
+}
+
+/* ── CRT scan-line overlay ──────────────────────────── */
+.crt::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.05) 2px,
+    rgba(0, 0, 0, 0.05) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── Terminal cursor blink ──────────────────────────── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+.cursor::after {
+  content: '█';
+  animation: blink 1s step-end infinite;
+  color: #00ffe0;
+  margin-left: 2px;
+}
+
+/* ── Glow utilities ─────────────────────────────────── */
+.glow-cyan  { text-shadow: 0 0 10px #00ffe0, 0 0 20px #00ffe0; }
+.glow-red   { text-shadow: 0 0 10px #ff4d6d, 0 0 20px #ff4d6d; }
+.glow-gold  { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+
+.border-glow-cyan {
+  box-shadow: 0 0 0 1px #00ffe0, 0 0 20px #00ffe020, inset 0 0 20px #00ffe008;
+}
+.border-glow-red {
+  box-shadow: 0 0 0 1px #ff4d6d, 0 0 20px #ff4d6d20, inset 0 0 20px #ff4d6d08;
+}
+
+/* ── CSS grid scroll animation (ShaderBackground) ───── */
+@keyframes cyber-grid {
+  from { background-position: 0 0,    0 0; }
+  to   { background-position: 40px 40px, 40px 40px; }
+}
+.cyber-grid-anim {
+  animation: cyber-grid 12s linear infinite;
+}
+
+/* ── Node status badge pulse ────────────────────────── */
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.4); opacity: 0.6; }
+}
+.pulse-dot { animation: pulse-dot 1.5s ease-in-out infinite; }
