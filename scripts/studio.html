@@ -53,22 +53,22 @@ scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.08).texture;
 scene.environmentIntensity = 0.5;
 
 // --- lights -----------------------------------------------------------------
-const ambient = new THREE.AmbientLight(0xffffff, 0.15);
+const ambient = new THREE.AmbientLight(0xffffff, 0.35);
 scene.add(ambient);
 
-const key = new THREE.SpotLight(0xfff0dd, 520, 30, Math.PI / 5, 0.6, 1.6);
+const key = new THREE.SpotLight(0xfff0dd, 1040, 30, Math.PI / 5, 0.6, 1.6);
 key.position.set(2.4, 3.4, 3.6);
 scene.add(key);
 
-const rimL = new THREE.SpotLight(0xf5d88e, 780, 30, Math.PI / 5, 0.5, 1.7);
+const rimL = new THREE.SpotLight(0xf5d88e, 1560, 30, Math.PI / 5, 0.5, 1.7);
 rimL.position.set(-3.4, 1.4, -2.2);
 scene.add(rimL);
 
-const rimR = new THREE.SpotLight(0xe8c47f, 650, 30, Math.PI / 5, 0.5, 1.7);
+const rimR = new THREE.SpotLight(0xe8c47f, 1300, 30, Math.PI / 5, 0.5, 1.7);
 rimR.position.set(3.6, -0.6, -2.4);
 scene.add(rimR);
 
-const fill = new THREE.DirectionalLight(0x8899bb, 1.2);
+const fill = new THREE.DirectionalLight(0x8899bb, 2.4);
 fill.position.set(-1.5, -1, 2.5);
 scene.add(fill);
 
