@@ -72,6 +72,11 @@ const fill = new THREE.DirectionalLight(0x8899bb, 2.4);
 fill.position.set(-1.5, -1, 2.5);
 scene.add(fill);
 
+// Front fill light for better visibility in all angles
+const frontFill = new THREE.DirectionalLight(0xffffff, 1.8);
+frontFill.position.set(0, 0, 3);
+scene.add(frontFill);
+
 // --- materials ---------------------------------------------------------------
 const M = {
   titanium: new THREE.MeshPhysicalMaterial({
