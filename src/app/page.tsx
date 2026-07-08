@@ -1,5 +1,5 @@
-import HeroSection from '@/components/hero/HeroSection'
+import EclipsePage from '@/components/eclipse/EclipsePage'
 
 export default function HomePage() {
-  return <HeroSection />
+  return <EclipsePage />
 }

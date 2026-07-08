@@ -1,0 +1,20 @@
+{
+  "orbit": {
+    "count": 120,
+    "path": "/frames/orbit",
+    "ext": "webp",
+    "pad": 4
+  },
+  "macro": {
+    "count": 90,
+    "path": "/frames/macro",
+    "ext": "webp",
+    "pad": 4
+  },
+  "exploded": {
+    "count": 110,
+    "path": "/frames/exploded",
+    "ext": "webp",
+    "pad": 4
+  }
+}

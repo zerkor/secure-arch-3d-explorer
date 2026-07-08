@@ -1,50 +1,33 @@
-import type { Metadata } from 'next'
-import { Space_Grotesk, JetBrains_Mono } from 'next/font/google'
-import { Toaster } from 'sonner'
-import Navbar from '@/components/shared/Navbar'
+import type { Metadata, Viewport } from 'next'
+import '@fontsource/playfair-display/400.css'
+import '@fontsource/playfair-display/500.css'
+import '@fontsource/playfair-display/600.css'
+import '@fontsource/playfair-display/400-italic.css'
+import '@fontsource/inter/300.css'
+import '@fontsource/inter/400.css'
+import '@fontsource/inter/500.css'
 import './globals.css'
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  variable: '--font-space-grotesk',
-  display: 'swap',
-})
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains',
-  display: 'swap',
-})
-
 export const metadata: Metadata = {
-  title: 'SecureArch 3D Explorer',
-  description: 'Interactive 3D visualization of a Zero Trust / SOC security architecture',
-  keywords: ['Zero Trust', 'SOC', 'SIEM', 'Cybersecurity', '3D', 'Architecture'],
+  title: 'AURUM & NOIR — The Eclipse',
+  description:
+    'The Eclipse. The first chronograph by AURUM & NOIR. Edition of 88, crafted in Genève.',
+}
+
+export const viewport: Viewport = {
+  themeColor: '#050506',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      data-scroll-behavior="smooth"
-      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} dark`}
-    >
-      <body className="crt bg-navy min-h-screen font-sans antialiased">
-        <Navbar />
-        <main>{children}</main>
-        <Toaster
-          theme="dark"
-          position="bottom-right"
-          toastOptions={{
-            style: {
-              background: '#1a2540',
-              border: '1px solid #00ffe040',
-              color: '#f5f5f5',
-              fontFamily: 'var(--font-jetbrains)',
-              fontSize: '12px',
-            },
+    <html lang="en">
+      <body className="grain vignette bg-noir-900 font-sans">
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `:root{--font-display:'Playfair Display';--font-sans:'Inter';}`,
           }}
         />
+        {children}
       </body>
     </html>
   )
