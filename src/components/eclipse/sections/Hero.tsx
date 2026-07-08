@@ -27,12 +27,12 @@ export default function Hero() {
   }, [])
 
   return (
-    <section ref={heroRef} className="relative w-full">
+    <section ref={heroRef} id="hero-section" className="relative w-full">
       <div className="h-screen flex flex-col items-center justify-center">
         <FrameScrubber
           sequence="orbit"
           frameCount={120}
-          trigger={heroRef.current}
+          triggerId="hero-section"
           start="top center"
           end="center center"
           scrub={1}

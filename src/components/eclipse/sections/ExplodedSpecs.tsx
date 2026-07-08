@@ -1,11 +1,8 @@
 'use client'
 
-import { useRef } from 'react'
 import FrameScrubber from '../FrameScrubber'
 
 export default function ExplodedSpecs() {
-  const sectionRef = useRef<HTMLDivElement>(null)
-
   const specs = [
     { label: 'Case material', value: 'Grade 5 Titanium' },
     { label: 'Diameter', value: '42 mm' },
@@ -16,7 +13,7 @@ export default function ExplodedSpecs() {
   ]
 
   return (
-    <section ref={sectionRef} className="min-h-screen bg-noir-900 py-24 px-8">
+    <section id="exploded-section" className="min-h-screen bg-noir-900 py-24 px-8">
       <div className="max-w-6xl mx-auto">
         <h3 className="font-display text-5xl font-light tracking-widest2 text-bone text-center mb-20">
           Engineered
@@ -26,7 +23,7 @@ export default function ExplodedSpecs() {
           <FrameScrubber
             sequence="exploded"
             frameCount={110}
-            trigger={sectionRef.current}
+            triggerId="exploded-section"
             start="top 40%"
             end="center"
             scrub={1.2}

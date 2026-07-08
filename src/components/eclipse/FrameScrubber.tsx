@@ -1,14 +1,17 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 interface FrameScrubberProps {
   sequence: 'orbit' | 'macro' | 'exploded'
   frameCount: number
   framePad?: number
   className?: string
-  trigger?: HTMLElement | null
+  triggerId?: string
   start?: string
   end?: string
   scrub?: number | boolean
@@ -19,46 +22,69 @@ export default function FrameScrubber({
   frameCount,
   framePad = 4,
   className = '',
-  trigger,
-  start = 'top center',
-  end = 'bottom center',
-  scrub = true,
+  triggerId,
+  start = 'top 60%',
+  end = 'bottom 40%',
+  scrub = 1.2,
 }: FrameScrubberProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const ctxRef = useRef<CanvasRenderingContext2D | null>(null)
   const framesRef = useRef<HTMLImageElement[]>([])
-  const currentFrameRef = useRef(0)
+  const [isReady, setIsReady] = useState(false)
 
-  // Load all frames for the sequence
+  // Load all frames upfront
   useEffect(() => {
-    const loadFrames = async () => {
+    const loadAllFrames = async () => {
       const frames: HTMLImageElement[] = []
+      const promises = []
+
       for (let i = 0; i < frameCount; i++) {
         const pad = String(i).padStart(framePad, '0')
-        const img = new Image()
-        img.src = `/frames/${sequence}/${pad}.webp`
-        img.onload = () => frames.push(img)
-        img.onerror = () => console.warn(`Failed to load frame ${pad}`)
+        const promise = new Promise<HTMLImageElement>((resolve, reject) => {
+          const img = new Image()
+          img.src = `/frames/${sequence}/${pad}.webp`
+          img.onload = () => {
+            frames[i] = img
+            resolve(img)
+          }
+          img.onerror = () => {
+            console.warn(`Failed: ${sequence}/${pad}.webp`)
+            reject(new Error(`Frame ${pad}`))
+          }
+        })
+        promises.push(promise)
       }
-      // Wait for all to load
-      await new Promise((r) =>
-        setTimeout(() => r(null), frameCount * 5 + 500)
-      )
-      framesRef.current = frames
+
+      try {
+        await Promise.all(promises)
+        framesRef.current = frames
+
+        // Draw first frame immediately
+        if (canvasRef.current && frames[0]) {
+          const canvas = canvasRef.current
+          const ctx = canvas.getContext('2d', { alpha: false })
+          if (ctx && frames[0].complete) {
+            ctx.drawImage(frames[0], 0, 0, canvas.width, canvas.height)
+          }
+        }
+
+        setIsReady(true)
+      } catch (e) {
+        console.error('Frame load error:', e)
+      }
     }
-    loadFrames()
+
+    loadAllFrames()
   }, [sequence, frameCount, framePad])
 
-  // Set up canvas and draw
+  // Canvas setup
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
 
     const ctx = canvas.getContext('2d', { alpha: false })
     if (!ctx) return
-    ctxRef.current = ctx
 
-    // Responsive sizing
+    // Set initial size
     const w = window.innerWidth
     const h = Math.round((w * 9) / 16)
     canvas.width = w
@@ -69,37 +95,35 @@ export default function FrameScrubber({
       const h2 = Math.round((w2 * 9) / 16)
       canvas.width = w2
       canvas.height = h2
-    }
-    window.addEventListener('resize', handleResize)
 
+      // Redraw on resize
+      if (framesRef.current.length > 0) {
+        ctx.drawImage(framesRef.current[0], 0, 0, canvas.width, canvas.height)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Draw current frame
+  // GSAP scroll animation
   useEffect(() => {
-    const canvas = canvasRef.current
-    const ctx = ctxRef.current
-    if (!canvas || !ctx || framesRef.current.length === 0) return
-
-    const img = framesRef.current[currentFrameRef.current]
-    if (img && img.complete) {
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-    }
-  }, [])
-
-  // GSAP ScrollTrigger animation
-  useEffect(() => {
-    if (!trigger) return
-    if (framesRef.current.length === 0) return
+    if (!isReady || !triggerId || framesRef.current.length === 0) return
 
     const canvas = canvasRef.current
-    const ctx = ctxRef.current
+    const ctx = canvas?.getContext('2d', { alpha: false })
     if (!canvas || !ctx) return
 
-    gsap.registerPlugin(require('gsap/ScrollTrigger').default)
-    const ScrollTrigger = require('gsap/ScrollTrigger').default
+    // Find trigger element by ID
+    const trigger = document.getElementById(triggerId)
+    if (!trigger) {
+      console.warn(`Trigger element not found: ${triggerId}`)
+      return
+    }
 
-    const t = gsap.to(
+    let currentFrame = 0
+
+    const tween = gsap.to(
       { frame: 0 },
       {
         frame: frameCount - 1,
@@ -109,26 +133,29 @@ export default function FrameScrubber({
           trigger,
           start,
           end,
-          scrub,
+          scrub: typeof scrub === 'number' ? scrub : 1,
           markers: false,
         },
         onUpdate() {
           const f = Math.round(this.targets()[0].frame)
-          currentFrameRef.current = f
-          if (framesRef.current[f]?.complete) {
-            ctx.drawImage(framesRef.current[f], 0, 0, canvas.width, canvas.height)
+          if (f !== currentFrame && framesRef.current[f]) {
+            currentFrame = f
+            const img = framesRef.current[f]
+            if (img.complete) {
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+            }
           }
         },
       }
     )
 
     return () => {
-      t.kill()
-      ScrollTrigger.getAll().forEach((st: any) => {
-        if (st.vars.trigger === trigger) st.kill()
+      tween.kill()
+      ScrollTrigger.getAll().forEach((t) => {
+        if (t.vars.trigger === trigger) t.kill()
       })
     }
-  }, [trigger, frameCount, start, end, scrub])
+  }, [isReady, triggerId, frameCount, start, end, scrub])
 
   return (
     <canvas

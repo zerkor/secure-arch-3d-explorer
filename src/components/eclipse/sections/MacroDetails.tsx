@@ -1,18 +1,15 @@
 'use client'
 
-import { useRef } from 'react'
 import FrameScrubber from '../FrameScrubber'
 
 export default function MacroDetails() {
-  const sectionRef = useRef<HTMLDivElement>(null)
-
   return (
-    <section ref={sectionRef} className="min-h-screen bg-noir-950 flex items-center justify-center py-24">
+    <section id="macro-section" className="min-h-screen bg-noir-950 flex items-center justify-center py-24">
       <div className="w-full">
         <FrameScrubber
           sequence="macro"
           frameCount={90}
-          trigger={sectionRef.current}
+          triggerId="macro-section"
           start="top 60%"
           end="bottom 40%"
           scrub={1.2}
