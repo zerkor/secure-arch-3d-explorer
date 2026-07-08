@@ -43,45 +43,48 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x000000);
+scene.background = new THREE.Color(0x0f1419);
 
 const camera = new THREE.PerspectiveCamera(32, W / H, 0.05, 50);
 
-// --- environment reflections (soft studio box, dimmed) ---------------------
+// --- environment reflections (soft studio box, brighter) ---------------------
 const pmrem = new THREE.PMREMGenerator(renderer);
-scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-scene.environmentIntensity = 0.25;
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.08).texture;
+scene.environmentIntensity = 0.5;
 
 // --- lights -----------------------------------------------------------------
-const key = new THREE.SpotLight(0xfff0dd, 260, 30, Math.PI / 5, 0.6, 1.6);
+const ambient = new THREE.AmbientLight(0xffffff, 0.15);
+scene.add(ambient);
+
+const key = new THREE.SpotLight(0xfff0dd, 520, 30, Math.PI / 5, 0.6, 1.6);
 key.position.set(2.4, 3.4, 3.6);
 scene.add(key);
 
-const rimL = new THREE.SpotLight(0xe8c882, 420, 30, Math.PI / 5, 0.5, 1.7);
+const rimL = new THREE.SpotLight(0xf5d88e, 780, 30, Math.PI / 5, 0.5, 1.7);
 rimL.position.set(-3.4, 1.4, -2.2);
 scene.add(rimL);
 
-const rimR = new THREE.SpotLight(0xd4af63, 330, 30, Math.PI / 5, 0.5, 1.7);
+const rimR = new THREE.SpotLight(0xe8c47f, 650, 30, Math.PI / 5, 0.5, 1.7);
 rimR.position.set(3.6, -0.6, -2.4);
 scene.add(rimR);
 
-const fill = new THREE.DirectionalLight(0x8899bb, 0.5);
+const fill = new THREE.DirectionalLight(0x8899bb, 1.2);
 fill.position.set(-1.5, -1, 2.5);
 scene.add(fill);
 
 // --- materials ---------------------------------------------------------------
 const M = {
   titanium: new THREE.MeshPhysicalMaterial({
-    color: 0x232326, metalness: 1, roughness: 0.4, envMapIntensity: 1.2,
+    color: 0x3a3a42, metalness: 1, roughness: 0.35, envMapIntensity: 1.5,
   }),
   titaniumDark: new THREE.MeshPhysicalMaterial({
-    color: 0x141416, metalness: 1, roughness: 0.55, envMapIntensity: 1.0,
+    color: 0x2a2a32, metalness: 1, roughness: 0.45, envMapIntensity: 1.3,
   }),
   gold: new THREE.MeshPhysicalMaterial({
-    color: 0xc9a35b, metalness: 1, roughness: 0.24, envMapIntensity: 1.9,
+    color: 0xd9b74f, metalness: 1, roughness: 0.18, envMapIntensity: 2.4,
   }),
   goldBright: new THREE.MeshPhysicalMaterial({
-    color: 0xe0b96e, metalness: 1, roughness: 0.14, envMapIntensity: 2.2,
+    color: 0xf0c86e, metalness: 1, roughness: 0.08, envMapIntensity: 2.8,
   }),
   steel: new THREE.MeshPhysicalMaterial({
     color: 0x8a8a92, metalness: 1, roughness: 0.35, envMapIntensity: 1.2,
